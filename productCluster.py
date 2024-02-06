@@ -1,3 +1,41 @@
+# scraper.py
+import requests
+from bs4 import BeautifulSoup
+from PIL import Image
+import io
+
+# Function to scrape product descriptions and images from a website
+def scrape_product_data(url):
+    product_descriptions = []
+    product_images = []
+
+    # Send HTTP GET request to the URL
+    response = requests.get(url)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Parse HTML content
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Find all product descriptions
+        descriptions = soup.find_all("h2", class_="productitem--title")
+        for desc in descriptions:
+            product_descriptions.append(desc.text.strip())
+
+        # Find all product images
+        product_items = soup.find_all("div", class_="productitem")
+        for item in product_items:
+            img_tag = item.find("img", class_="productitem--image-primary")
+            if img_tag:
+                img_url = img_tag['src']
+                # Check if the URL starts with "http" or "//"
+                if img_url.startswith("//"):
+                    img_url = "https:" + img_url  # Prepend "https:" if the URL starts with "//"
+                product_images.append(img_url)
+
+    return product_descriptions, product_images
+
+# streamlit_app.py
 import streamlit as st
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -5,7 +43,7 @@ from sklearn.cluster import KMeans
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-# Download NLTK stopwords and punkt tokenizer
+# Download NLTK stopwords
 import nltk
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -71,23 +109,14 @@ def main():
                 # Create a new row for each group of images
                 col1, col2, col3 = st.columns(num_columns)
                 with col1:
-                    display_product_card(cluster_descriptions[i], cluster_images[i])
+                    st.write(cluster_descriptions[i])
+                    st.image(cluster_images[i], width=200)  # Adjust width as needed
                 with col2:
-                    display_product_card(cluster_descriptions[i + images_per_row], cluster_images[i + images_per_row])
+                    st.write(cluster_descriptions[i + images_per_row])
+                    st.image(cluster_images[i + images_per_row], width=200)  # Adjust width as needed
                 with col3:
-                    display_product_card(cluster_descriptions[i + 2 * images_per_row], cluster_images[i + 2 * images_per_row])
-
-def display_product_card(description, image_url):
-    # Use HTML and CSS to create a card-like component
-    st.markdown(
-        f"""
-        <div style="border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin-bottom: 10px;">
-            <h3>{description}</h3>
-            <img src="{image_url}" style="width: 200px;">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+                    st.write(cluster_descriptions[i + 2 * images_per_row])
+                    st.image(cluster_images[i + 2 * images_per_row], width=200)  # Adjust width as needed
 
 if __name__ == "__main__":
     main()
