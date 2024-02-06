@@ -46,6 +46,7 @@ from nltk.tokenize import word_tokenize
 # Download NLTK stopwords
 import nltk
 nltk.download('stopwords')
+nltk.download('punkt')
 
 # Function to perform K-means clustering on text data
 def text_clustering(descriptions, num_clusters=3):
