@@ -80,7 +80,9 @@ def main():
         product_descriptions, product_images = scrape_product_data(url)
 
         # Perform clustering
-        clustering_option = st.radio("Clustering Based On", ("Text", "Image"))
+        # clustering_option = st.radio("Clustering Based On", ("Text", "Image"))
+        
+        clustering_option = "Text"
 
         if clustering_option == "Text":
             # Perform text clustering
@@ -108,13 +110,13 @@ def main():
                 col1, col2, col3 = st.columns(num_columns)
                 with col1:
                     st.write(cluster_descriptions[i])
-                    st.image(cluster_images[i], caption='Product Image', width=200)  # Adjust width as needed
+                    st.image(cluster_images[i], width=200)  # Adjust width as needed
                 with col2:
                     st.write(cluster_descriptions[i + images_per_row])
-                    st.image(cluster_images[i + images_per_row], caption='Product Image', width=200)  # Adjust width as needed
+                    st.image(cluster_images[i + images_per_row], width=200)  # Adjust width as needed
                 with col3:
                     st.write(cluster_descriptions[i + 2 * images_per_row])
-                    st.image(cluster_images[i + 2 * images_per_row], caption='Product Image', width=200)  # Adjust width as needed
+                    st.image(cluster_images[i + 2 * images_per_row], width=200)  # Adjust width as needed
 
 if __name__ == "__main__":
     main()
