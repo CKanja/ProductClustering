@@ -71,52 +71,64 @@ def text_clustering(descriptions, num_clusters=3):
 def main():
     st.title("Product Clustering App")
 
+    default_url = "https://murukali.com/"
     # Sidebar for user input
     st.sidebar.header("Scraping Parameters")
-    url = st.sidebar.text_input("Enter URL of the website to scrape")
+    url = st.sidebar.text_input("Enter URL of the website to scrape", default_url)
     num_clusters = st.sidebar.slider("Number of Clusters", min_value=2, max_value=10, value=3)
 
     if st.sidebar.button("Scrape Data"):
-        product_descriptions, product_images = scrape_product_data(url)
-
-        # Perform clustering
-        # clustering_option = st.radio("Clustering Based On", ("Text", "Image"))
         
-        clustering_option = "Text"
-
-        if clustering_option == "Text":
-            # Perform text clustering
-            labels = text_clustering(product_descriptions, num_clusters)
-        elif clustering_option == "Image":
-            # Perform image clustering
-            labels = image_clustering(product_images, num_clusters)
-
-        # Display clustering results
-        st.write(f"Number of clusters: {num_clusters}")
+        #Error Handling
+        if(not url):
+            st.warning('No URL found. Please insert a URL.')
         
-        # Display descriptions and images for each cluster
-        for cluster_num in range(num_clusters):
-            st.subheader(f"Cluster {cluster_num + 1}")  # Add a subtitle for the cluster
-            
-            # Get descriptions and images for the current cluster
-            cluster_descriptions = [desc for desc, label in zip(product_descriptions, labels) if label == cluster_num]
-            cluster_images = [img for img, label in zip(product_images, labels) if label == cluster_num]
-            
-            num_columns = 3  # Number of columns for image display
-            images_per_row = len(cluster_images) // num_columns
+        else:
+            product_descriptions, product_images = scrape_product_data(url)
 
-            for i in range(images_per_row):
-                # Create a new row for each group of images
-                col1, col2, col3 = st.columns(num_columns)
-                with col1:
-                    st.write(cluster_descriptions[i])
-                    st.image(cluster_images[i], width=200)  # Adjust width as needed
-                with col2:
-                    st.write(cluster_descriptions[i + images_per_row])
-                    st.image(cluster_images[i + images_per_row], width=200)  # Adjust width as needed
-                with col3:
-                    st.write(cluster_descriptions[i + 2 * images_per_row])
-                    st.image(cluster_images[i + 2 * images_per_row], width=200)  # Adjust width as needed
+            # Perform clustering
+            # clustering_option = st.radio("Clustering Based On", ("Text", "Image"))
+            
+            clustering_option = "Text"
+
+            if clustering_option == "Text":
+                # Perform text clustering
+                labels = text_clustering(product_descriptions, num_clusters)
+            elif clustering_option == "Image":
+                # Perform image clustering
+                labels = image_clustering(product_images, num_clusters)
+
+            # Display clustering results
+            st.write(f"Number of clusters: {num_clusters}")
+            
+            # Display descriptions and images for each cluster
+            for cluster_num in range(num_clusters):
+                # st.info(f"Cluster {cluster_num + 1}")  # Add a subtitle for the cluster
+                # Define the message
+                message = f"<div style='background-color: purple; padding: 10px;'><b>Cluster {cluster_num + 1}</b></div>"
+
+                # Display the message with custom HTML styling
+                st.write(message, unsafe_allow_html=True)
+                
+                # Get descriptions and images for the current cluster
+                cluster_descriptions = [desc for desc, label in zip(product_descriptions, labels) if label == cluster_num]
+                cluster_images = [img for img, label in zip(product_images, labels) if label == cluster_num]
+                
+                num_columns = 3  # Number of columns for image display
+                images_per_row = len(cluster_images) // num_columns
+
+                for i in range(images_per_row):
+                    # Create a new row for each group of images
+                    col1, col2, col3 = st.columns(num_columns)
+                    with col1:
+                        st.write(cluster_descriptions[i])
+                        st.image(cluster_images[i], width=200)  # Adjust width as needed
+                    with col2:
+                        st.write(cluster_descriptions[i + images_per_row])
+                        st.image(cluster_images[i + images_per_row], width=200)  # Adjust width as needed
+                    with col3:
+                        st.write(cluster_descriptions[i + 2 * images_per_row])
+                        st.image(cluster_images[i + 2 * images_per_row], width=200)  # Adjust width as needed
 
 if __name__ == "__main__":
     main()
