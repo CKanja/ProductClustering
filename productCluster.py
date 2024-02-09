@@ -75,7 +75,7 @@ def main():
     # Sidebar for user input
     st.sidebar.header("Scraping Parameters")
     url = st.sidebar.text_input("Enter URL of the website to scrape", default_url)
-    num_clusters = st.sidebar.slider("Number of Clusters", min_value=2, max_value=10, value=3)
+    num_clusters = st.sidebar.slider("Number of Clusters", min_value=2, max_value=10, value=5)
 
     if st.sidebar.button("Scrape Data"):
         
